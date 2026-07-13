@@ -1,17 +1,19 @@
+
 const videos = [
-    { title: "الدرس الأول", url: "https://www.youtube.com/embed/VIDEO_ID_1" },
-    { title: "الدرس الثاني", url: "https://www.youtube.com/embed/VIDEO_ID_2" },
-    { title: "الدرس الثالث", url: "https://www.youtube.com/embed/VIDEO_ID_3" }
+    { title: "الدرس الأول", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" }
 ];
 
 const container = document.getElementById('videos');
+
+// مسح أي محتوى قديم لعرض الجديد فقط
+container.innerHTML = '';
 
 videos.forEach(video => {
     const card = document.createElement('div');
     card.className = 'card';
     card.innerHTML = `
-        <h2>${video.title}</h2>
-        <iframe src="${video.url}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <h3>${video.title}</h3>
+        <iframe width="100%" height="315" src="${video.url}" frameborder="0" allowfullscreen></iframe>
     `;
     container.appendChild(card);
 });
