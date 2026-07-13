@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الأستاذ - رفع الدروس</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .upload-container { background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        h2 { color: #2c3e50; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        label { display: block; margin-bottom: 8px; color: #34495e; font-weight: bold; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 6px; box-sizing: border-box; }
+        .btn-submit { background-color: #27ae60; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background-color: #219150; }
+        .btn-submit:disabled { background-color: #95a5a6; cursor: not-allowed; }
+        .link-student { display: inline-block; margin-top: 20px; color: #2980b9; text-decoration: none; font-weight: bold; }
+        .link-student:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="upload-container">
+    <h2>👨‍🏫 لوحة تحكم الأستاذ (رفع الدروس)</h2>
+    <p style="color: #7f8c8d; font-size: 14px; margin-bottom: 20px;">يرجى ملء البيانات لرفع الدرس السحابي فوراً.</p>
+    
+    <div class="form-group">
+        <label for="videoTitle">عنوان الدرس التعليمي:</label>
+        <input type="text" id="videoTitle" placeholder="اكتب هنا عنوان الدرس (مثال: الدرس الأول)">
+    </div>
+    
+    <div class="form-group">
+        <label for="videoFile">اختر ملف الفيديو من جهازك:</label>
+        <input type="file" id="videoFile" accept="video/*">
+    </div>
+    
+    <button class="btn-submit" id="uploadBtn">اضغط هنا للرفع فوراً 🚀</button>
+    
+    <a href="student.html" class="link-student">⬅️ الانتقال لصفحة الطلاب لمشاهدة الدروس</a>
+</div><a href="student.html">الانتقال لصفحة الطالب</a>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* خلفية متدرجة رائعة باللون الأزرق والبنفسجي */
+    background: linear-gradient(135deg, #74b9ff, #a29bfe);
+    color: #333;
+    margin: 0;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    direction: rtl;
+    min-height: 100vh;
+}
+.container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px; /* زوايا دائرية ناعمة */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* ظل احترافي أسفل الصندوق */
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+h2 {
+    color: #6c5ce7; /* لون عنوان بنفسجي مميز */
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+hr {
+    border: 0;
+    height: 3px;
+    background: #74b9ff;
+    border-radius: 5px;
+    margin-bottom: 25px;
+}
+#videoContainer p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #b2bec3;
+    padding: 20px;
+    border: 2px dashed #ffeaa7; /* إطار متقطع جميل لجلب الانتباه */
+    background-color: #faf9f6;
+    border-radius: 10px;
+}
