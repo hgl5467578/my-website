@@ -1,39 +1,93 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الطلاب - مشاهدة الدروس</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
-        #videoContainer { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .video-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .video-card h3 { margin-top: 0; color: #34495e; margin-bottom: 15px; }
-        .link-back { display: block; text-align: center; margin-bottom: 20px; color: #2980b9; text-decoration: none; font-weight: bold; }
-        .link-back:hover { text-decoration: underline; }
-    </style>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>منصة الطلاب</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+body{
+font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;
+background:#f4f7f6;
+margin:0;
+padding:20px;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+color:#2c3e50;
+margin-bottom:30px;
+}
+
+.video-card{
+background:#fff;
+padding:20px;
+margin-bottom:25px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.video-card h3{
+margin-top:0;
+color:#34495e;
+}
+
+iframe{
+width:100%;
+height:450px;
+border:none;
+border-radius:10px;
+}
+
+.back{
+display:inline-block;
+margin-bottom:20px;
+text-decoration:none;
+font-weight:bold;
+}
+
+</style>
+
 </head>
-<body><a href="index.html">العودة لصفحة الأستاذ</a>
+
+<body>
 
 <div class="container">
-    <a href="upload.html" class="link-back">⬅️ العودة للوحة تحكم الأستاذ</a>
-    <h1>👨‍🎓 منصة الطلاب المرفوعة سحابياً</h1>
-    
-    <div id="videoContainer">
-        <div id="videoContainer">
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/OvsP1rkS7Yw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<a href="index.html" class="back">
+⬅ العودة إلى لوحة الأستاذ
+</a>
+
+<h1>📚 منصة الدروس</h1>
+
+<div id="videoContainer">
+
+<p style="text-align:center;">
+جاري تحميل الدروس...
+</p>
+
 </div>
-    </div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
 <script src="script.js"></script>
 
 </body>
+
 </html>
