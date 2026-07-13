@@ -1,4 +1,7 @@
-// إعدادات الاتصال الخاصة بمنصتك (مأخوذة من حسابك)
+//=========================
+// إعداد Firebase
+//=========================
+
 const firebaseConfig = {
   apiKey: "AIzaSyAUBbxDZY31hQPhAq1wQXUAct3c1XsJhto",
   authDomain: "myschoolplatform-d5981.firebaseapp.com",
@@ -9,101 +12,136 @@ const firebaseConfig = {
   measurementId: "G-WNOMSJDLXP"
 };
 
-// تشغيل Firebase بالطريقة المتوافقة محلياً
 firebase.initializeApp(firebaseConfig);
+
 const db = firebase.firestore();
-const storage = firebase.storage();
 
-// ==========================================
-// 👨‍🏫 أولاً: كود صفحة المعلم (رفع الدروس)
-// ==========================================
-const uploadBtn = document.getElementById('uploadBtn');
-const videoTitleInput = document.getElementById('videoTitle');
-const videoFileInput = document.getElementById('videoFile');
 
-if (uploadBtn) {
-    uploadBtn.addEventListener('click', async () => {
-        const title = videoTitleInput.value.trim();
-        const file = videoFileInput.files[0];
+//=========================
+// صفحة الأستاذ
+//=========================
 
-        if (!title || !file) {
-            alert('رجاءً اكتب عنوان الدرس واختر ملف الفيديو أولاً!');
-            return;
-        }
+const uploadBtn = document.getElementById("uploadBtn");
+const videoTitle = document.getElementById("videoTitle");
+const videoUrl = document.getElementById("videoUrl");
 
-        try {
-            // تغيير نص وحالة الزر لمنع التكرار
-            uploadBtn.disabled = true;
-            uploadBtn.innerText = 'جاري الرفع السحابي الآن... انتظر قليلاً ⏳';
+if(uploadBtn){
 
-            // أ) إنشاء مسار الرفع السحابي للملف
-            const storageRef = storage.ref('lessons/' + Date.now() + '_' + file.name);
-            
-            // ب) بدء رفع الملف الفعلي للـ Storage
-            const snapshot = await storageRef.put(file);
-            
-            // ج) جلب الرابط السحابي للملف المرفوع
-            const downloadURL = await snapshot.ref.getDownloadURL();
+uploadBtn.addEventListener("click", async ()=>{
 
-            // د) حفظ العنوان والرابط في قاعدة بيانات Firestore
-            await db.collection("lessons").add({
-                title: title,
-                url: downloadURL,
-                createdAt: new Date()
-            });
+const title = videoTitle.value.trim();
+const url = videoUrl.value.trim();
 
-            alert('تم رفع الدرس بنجاح تام ووصل إلى السحاب 🎉');
-            videoTitleInput.value = '';
-            videoFileInput.value = '';
-
-        } catch (error) {
-            console.error("خطأ أثناء الرفع:", error);
-            alert('حدث خطأ أثناء الرفع! تأكد من تفعيل قواعد الحماية Rules في حساب Firebase الخاص بك لـ Storage و Firestore.');
-        } finally {
-            uploadBtn.disabled = false;
-            uploadBtn.innerText = 'اضغط هنا للرفع فوراً 🚀';
-        }
-    });
+if(title==="" || url===""){
+alert("يرجى إدخال عنوان الدرس ورابط اليوتيوب.");
+return;
 }
 
-// ==========================================
-// 👨‍🎓 ثانياً: كود صفحة الطلاب (عرض الدروس)
-// ==========================================
-const videoContainer = document.getElementById('videoContainer');
+let videoId="";
 
-async function loadVideos() {
-    if (!videoContainer) return;
-    
-    try {
-        videoContainer.innerHTML = '';
-        
-        // جلب جميع المستندات المرفوعة من السحابة مرتبة
-        const querySnapshot = await db.collection("lessons").get();
-        
-        if (querySnapshot.empty) {
-            videoContainer.innerHTML = "<p style='color: #7f8c8d; text-align:center;'>لا توجد دروس مرفوعة حالياً.</p>";
-            return;
-        }
-
-        querySnapshot.forEach((doc) => {
-            const lesson = doc.data();
-            const card = document.createElement("div");
-            card.className = "video-card";
-            card.innerHTML = `
-                <h3>🎬 ${lesson.title}</h3>
-                <video controls style="width:100%; border-radius:8px;">
-                    <source src="${lesson.url}" type="video/mp4">
-                    متصفحك لا يدعم تشغيل هذا الفيديو.
-                </video>
-            `;
-            videoContainer.appendChild(card);
-        });
-    } catch (error) {
-        console.error("خطأ في جلب البيانات:", error);
-        videoContainer.innerHTML = "<p style='color: #e74c3c; text-align:center;'>حدث خطأ أثناء جلب الدروس، تأكد من إعدادات الـ Rules في Firestore Database.</p>";
-    }
+if(url.includes("watch?v=")){
+videoId=url.split("watch?v=")[1].split("&")[0];
+}
+else if(url.includes("youtu.be/")){
+videoId=url.split("youtu.be/")[1].split("?")[0];
+}
+else{
+alert("رابط اليوتيوب غير صحيح.");
+return;
 }
 
-if (videoContainer) {
-    loadVideos();
+const embed="https://www.youtube.com/embed/"+videoId;
+
+try{
+
+uploadBtn.disabled=true;
+uploadBtn.innerText="جاري الحفظ...";
+
+await db.collection("lessons").add({
+
+title:title,
+
+url:embed,
+
+createdAt:new Date()
+
+});
+
+alert("تمت إضافة الدرس بنجاح ✅");
+
+videoTitle.value="";
+videoUrl.value="";
+
+}
+catch(error){
+
+console.log(error);
+
+alert("حدث خطأ أثناء الحفظ.");
+
+}
+
+uploadBtn.disabled=false;
+
+uploadBtn.innerText="رفع الدرس";
+
+});
+
+}
+
+
+
+//=========================
+// صفحة الطلاب
+//=========================
+
+const videoContainer=document.getElementById("videoContainer");
+
+if(videoContainer){
+
+loadVideos();
+
+}
+
+async function loadVideos(){
+
+videoContainer.innerHTML="";
+
+const snapshot=await db.collection("lessons").orderBy("createdAt","desc").get();
+
+if(snapshot.empty){
+
+videoContainer.innerHTML="<p>لا توجد دروس حالياً.</p>";
+
+return;
+
+}
+
+snapshot.forEach(doc=>{
+
+const lesson=doc.data();
+
+const card=document.createElement("div");
+
+card.className="video-card";
+
+card.innerHTML=`
+
+<h3>${lesson.title}</h3>
+
+<iframe
+width="100%"
+height="400"
+src="${lesson.url}"
+title="${lesson.title}"
+frameborder="0"
+allowfullscreen>
+</iframe>
+
+`;
+
+videoContainer.appendChild(card);
+
+});
+
 }
