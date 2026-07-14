@@ -12,6 +12,13 @@
             display: flex; justify-content: center; align-items: center; flex-direction: column;
             color: #d4af37;
         }
+        .login-banner {
+    max-width: 300px;
+    width: 90%;
+    margin-bottom: 25px;
+    border-radius: 10px;
+    border: 2px solid #d4af37;
+}
         body { 
             font-family: sans-serif; background: #0b0e14; color: #ffffff; margin: 0; padding: 20px;
         }
@@ -32,6 +39,7 @@
 <body>
 
     <div id="login-screen">
+        <img src="login-banner.png" class="login-banner" alt="إعلان الدورة">
         <h1>🔐 دخول الطالب</h1>
         <input type="text" id="code-input" placeholder="أدخل الكود">
         <button onclick="checkCode()">دخول</button>
