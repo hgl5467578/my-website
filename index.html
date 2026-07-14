@@ -102,14 +102,13 @@
 
         const container = document.getElementById("videos");
         videos.forEach(video => {
-            container.innerHTML += `
-            <div class="card">
-                <h2>${video.title}</h2>
-                <div class="video-wrapper">
-                    <iframe src="${video.url}?modestbranding=1&rel=0&iv_load_policy=3" allowfullscreen></iframe>
-                </div>
-            </div>
-            `;
+         container.innerHTML += `
+    <div class="card">
+        <h2>${video.title}</h2>
+        <div class="video-container-wrapper" onclick="this.innerHTML='<iframe src=\'${video.url}?autoplay=1\' style=\'width:100%;height:100%;border:none;\' allowfullscreen></iframe>'">
+            <img src="poster.jpg" alt="اضغط للبدء" class="video-cover-img">
+        </div>
+    </div>`;
         });
     </script>
 </body>
