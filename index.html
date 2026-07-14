@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الرياضيات - السادس العلمي</title>
     
+    <!-- استدعاء ملفات المشغل الأنيق Plyr.io لمنع ظهور شعار اليوتيوب -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+
     <style>
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -13,12 +17,12 @@
             color: #d4af37;
         }
         .login-banner {
-    max-width: 300px;
-    width: 90%;
-    margin-bottom: 25px;
-    border-radius: 10px;
-    border: 2px solid #d4af37;
-}
+            max-width: 300px;
+            width: 90%;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            border: 2px solid #d4af37;
+        }
         body { 
             font-family: sans-serif; background: #0b0e14; color: #ffffff; margin: 0; padding: 20px;
         }
@@ -33,6 +37,15 @@
             margin-top: 10px; border: 2px solid #d4af37; border-radius: 10px; overflow: hidden;
         }
         .cover-img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* تنسيق إضافي لدمج المشغل الجديد داخل المربع الذهبي بدقة 100% */
+        .video-box .plyr {
+            height: 100% !important;
+            width: 100% !important;
+        }
+        .video-box .plyr__video-wrapper {
+            height: 100% !important;
+        }
     </style>
 </head>
 
@@ -51,12 +64,37 @@
     </div>
 
     <script>
-        // دالة عرض الفيديو عند الضغط
+        // دالة عرض الفيديو عند الضغط مطورة برمجياً لتفعيل Plyr وإخفاء اليوتيوب
         function loadVideo(element, url) {
-            element.innerHTML = `<iframe src="${url}?autoplay=1" style="width:100%;height:100%;border:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            // استخراج معرف الفيديو (ID) تلقائياً من الرابط
+            const videoId = url.split('/').pop().split('?')[0]; 
+
+            element.innerHTML = `
+                <div class="plyr__video-embed" style="width:100%; height:100%;">
+                    <iframe
+                        src="https://www.youtube.com/embed/${videoId}?origin=${window.location.origin}&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1&autoplay=1"
+                        allowfullscreen
+                        allowtransparency
+                        allow="autoplay; encrypted-media"
+                        style="width:100%; height:100%; border:none;"
+                    ></iframe>
+                </div>
+            `;
+            
+            // تهيئة المشغل وإخفاء عناصر تحكم اليوتيوب بالكامل
+            const player = new Plyr(element.querySelector('.plyr__video-embed'), {
+                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+                settings: ['quality', 'speed'],
+                youtube: { noCookie: true, rel: 0, showinfo: 0, iv_load_policy: 3, modestbranding: 1 }
+            });
+
+            // تشغيل تلقائي فور تحميل الفيديو
+            player.on('ready', () => {
+                player.play();
+            });
         }
 
-     // قائمة الرموز المعتمدة (يمكنك إضافة أو حذف أي رمز من هنا)
+     // قائمة الرموز المعتمدة (تبقى كما هي تماماً دون تغيير)
 const validCodes = [
     "12543", "83920", "47105", "92837", "10293", 
     "56473", "28374", "91028", "37465", "82910", 
@@ -66,7 +104,6 @@ const validCodes = [
 
 function checkCode() {
     const input = document.getElementById("code-input").value;
-    // التحقق هل الكود المدخل موجود ضمن القائمة أعلاه
     if (validCodes.includes(input)) {
         localStorage.setItem("isLoggedIn", "true");
         document.getElementById("login-screen").style.display = "none";
@@ -76,7 +113,7 @@ function checkCode() {
     }
 }
 
-        // هنا ضع روابط فيديوهاتك
+        // هنا تضع روابط فيديوهاتك بنفس الطريقة تماماً ولن تختلف خطوة واحدة في المستقبل
         const videos = [
             { title: "الدرس الأول", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
             { title: "الدرس الثاني", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
