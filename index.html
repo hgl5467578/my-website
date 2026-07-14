@@ -6,15 +6,12 @@
     <title>منصة الرياضيات - السادس العلمي</title>
     
     <style>
-        /* ستايل صفحة الدخول */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #0b0e14; z-index: 9999;
             display: flex; justify-content: center; align-items: center; flex-direction: column;
             color: #d4af37;
         }
-        
-        /* التصميم الأساسي */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background: linear-gradient(135deg, #0b0e14 0%, #1a1e26 100%); 
@@ -22,33 +19,18 @@
         }
         .container { max-width: 1100px; margin: auto; }
         h1 { text-align: center; color: #d4af37; margin-bottom: 40px; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
-        
         #videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; padding: 20px; }
         .card { background: #1c202d; padding: 20px; border-radius: 15px; border: 1px solid #d4af37; text-align: center; }
-        .video-wrapper { position: relative; width: 100%; height: 180px; overflow: hidden; border-radius: 10px; border: 2px solid #d4af37; }
-        .video-wrapper iframe { position: absolute; top: -30px; left: 0; width: 100%; height: calc(100% + 60px); border: none; }
-        
         input { padding: 12px; border-radius: 5px; border: 1px solid #d4af37; background: #1c202d; color: white; width: 250px; text-align: center; margin: 10px; }
         button { padding: 10px 25px; background: #d4af37; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: black; }
         .video-container-wrapper {
-    position: relative;
-    width: 100%;
-    height: 200px;
-    cursor: pointer;
-    margin-top: 10px;
-    border: 2px solid #d4af37;
-    border-radius: 10px;
-    overflow: hidden;
-}
-.video-cover-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 10;
-}
+            position: relative; width: 100%; height: 200px; cursor: pointer;
+            margin-top: 10px; border: 2px solid #d4af37; border-radius: 10px; overflow: hidden;
+        }
+        .video-cover-img {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover; z-index: 10;
+        }
     </style>
 </head>
 
@@ -66,7 +48,6 @@
     </div>
 
     <script>
-        // الـ 20 كود (كل كود 5 أرقام)
         const validCodes = [
             "12543", "83920", "47105", "92837", "10293", 
             "56473", "28374", "91028", "37465", "82910", 
@@ -74,7 +55,6 @@
             "83746", "51627", "49382", "92019", "74653"
         ];
 
-        // التحقق عند فتح الصفحة إذا كان الطالب دخل مسبقاً
         window.onload = function() {
             if (localStorage.getItem("isLoggedIn") === "true") {
                 document.getElementById("login-screen").style.display = "none";
@@ -93,22 +73,21 @@
             }
         }
 
-        // بيانات الفيديوهات
         const videos = [
             { title: "الدرس الأول", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
             { title: "الدرس الثاني", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
-            { title: "الدرس الثالث ", url: "https://www.youtube.com/embed/VP63-l44Gyg" },
+            { title: "الدرس الثالث", url: "https://www.youtube.com/embed/VP63-l44Gyg" },
         ];
 
         const container = document.getElementById("videos");
         videos.forEach(video => {
-         container.innerHTML += `
-    <div class="card">
-        <h2>${video.title}</h2>
-        <div class="video-container-wrapper" onclick="this.innerHTML='<iframe src=\'${video.url}?autoplay=1\' style=\'width:100%;height:100%;border:none;\' allowfullscreen></iframe>'">
-            <img src="poster.jpg" alt="اضغط للبدء" class="video-cover-img">
-        </div>
-    </div>`;
+            container.innerHTML += `
+            <div class="card">
+                <h2>${video.title}</h2>
+                <div class="video-container-wrapper" onclick="this.innerHTML='<iframe src=\'${video.url}?autoplay=1\' style=\'width:100%;height:100%;border:none;\' allow=\'autoplay; encrypted-media\' allowfullscreen></iframe>'">
+                    <img src="poster.jpg" alt="اضغط للبدء" class="video-cover-img">
+                </div>
+            </div>`;
         });
     </script>
 </body>
