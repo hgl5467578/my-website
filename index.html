@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الرياضيات - السادس العلمي</title>
     
-    <!-- استدعاء ملفات المشغل الأنيق Plyr.io لمنع ظهور شعار اليوتيوب -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-    <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-
     <style>
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -32,19 +28,33 @@
         .card { background: #1c202d; padding: 15px; border-radius: 10px; border: 1px solid #d4af37; text-align: center; }
         input { padding: 10px; width: 200px; margin: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1c202d; color: white; }
         button { padding: 10px 20px; background: #d4af37; border: none; border-radius: 5px; cursor: pointer; color: black; font-weight: bold; }
+        
         .video-box {
             position: relative; width: 100%; height: 200px; cursor: pointer;
             margin-top: 10px; border: 2px solid #d4af37; border-radius: 10px; overflow: hidden;
         }
         .cover-img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* تنسيق إضافي لدمج المشغل الجديد داخل المربع الذهبي بدقة 100% */
-        .video-box .plyr {
-            height: 100% !important;
-            width: 100% !important;
+        /* الدروع الشفافة لحماية الفيديو ومنع الضغط والتحويل لليوتيوب */
+        .video-shield-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 55px; /* يغطي شريط العنوان وصورة المدرس بالكامل */
+            background: transparent;
+            z-index: 10;
+            cursor: default;
         }
-        .video-box .plyr__video-wrapper {
-            height: 100% !important;
+        .video-shield-bottom-left {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 120px; /* يغطي شعار يوتيوب بالكامل لمنع الضغط عليه */
+            height: 45px;
+            background: transparent;
+            z-index: 10;
+            cursor: default;
         }
     </style>
 </head>
@@ -64,37 +74,23 @@
     </div>
 
     <script>
-        // دالة عرض الفيديو عند الضغط مطورة برمجياً لتفعيل Plyr وإخفاء اليوتيوب
+        // دالة عرض الفيديو مع الدروع الشفافة لحظر روابط اليوتيوب وتأمين التكبير
         function loadVideo(element, url) {
-            // استخراج معرف الفيديو (ID) تلقائياً من الرابط
             const videoId = url.split('/').pop().split('?')[0]; 
 
             element.innerHTML = `
-                <div class="plyr__video-embed" style="width:100%; height:100%;">
-                    <iframe
-                        src="https://www.youtube.com/embed/${videoId}?origin=${window.location.origin}&iv_load_policy=3&modestbranding=1&playsinline=1&showinfo=0&rel=0&enablejsapi=1&autoplay=1"
-                        allowfullscreen
-                        allowtransparency
-                        allow="autoplay; encrypted-media"
-                        style="width:100%; height:100%; border:none;"
-                    ></iframe>
-                </div>
+                <div class="video-shield-top"></div>
+                <div class="video-shield-bottom-left"></div>
+                <iframe 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0" 
+                    style="width:100%; height:100%; border:none; position:relative; z-index:1;" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen>
+                </iframe>
             `;
-            
-            // تهيئة المشغل وإخفاء عناصر تحكم اليوتيوب بالكامل
-            const player = new Plyr(element.querySelector('.plyr__video-embed'), {
-                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
-                settings: ['quality', 'speed'],
-                youtube: { noCookie: true, rel: 0, showinfo: 0, iv_load_policy: 3, modestbranding: 1 }
-            });
-
-            // تشغيل تلقائي فور تحميل الفيديو
-            player.on('ready', () => {
-                player.play();
-            });
         }
 
-     // قائمة الرموز المعتمدة (تبقى كما هي تماماً دون تغيير)
+     // قائمة الرموز المعتمدة (لم يتغير فيها حرف واحد)
 const validCodes = [
     "12543", "83920", "47105", "92837", "10293", 
     "56473", "28374", "91028", "37465", "82910", 
@@ -113,7 +109,7 @@ function checkCode() {
     }
 }
 
-        // هنا تضع روابط فيديوهاتك بنفس الطريقة تماماً ولن تختلف خطوة واحدة في المستقبل
+        // روابط فيديوهاتك (تبقى كما هي تماماً)
         const videos = [
             { title: "الدرس الأول", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
             { title: "الدرس الثاني", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
