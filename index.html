@@ -48,16 +48,25 @@
             element.innerHTML = `<iframe src="${url}?autoplay=1" style="width:100%;height:100%;border:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
         }
 
-        function checkCode() {
-            const input = document.getElementById("code-input").value;
-            if (["12543", "83920"].includes(input)) {
-                localStorage.setItem("isLoggedIn", "true");
-                document.getElementById("login-screen").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
-            } else {
-                alert("كود خاطئ!");
-            }
-        }
+     // قائمة الرموز المعتمدة (يمكنك إضافة أو حذف أي رمز من هنا)
+const validCodes = [
+    "12543", "83920", "47105", "92837", "10293", 
+    "56473", "28374", "91028", "37465", "82910", 
+    "47362", "59281", "10394", "67482", "29384", 
+    "83746", "51627", "49382", "92019", "74653"
+];
+
+function checkCode() {
+    const input = document.getElementById("code-input").value;
+    // التحقق هل الكود المدخل موجود ضمن القائمة أعلاه
+    if (validCodes.includes(input)) {
+        localStorage.setItem("isLoggedIn", "true");
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+    } else {
+        alert("كود خاطئ!");
+    }
+}
 
         // هنا ضع روابط فيديوهاتك
         const videos = [
