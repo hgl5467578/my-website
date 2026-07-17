@@ -27,15 +27,15 @@
         }
         .cover-img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* الطبقة الشفافة التي تمنع النقر على الفيديو */
+        /* هذا الغطاء يغطي كل شيء ما عدا الزاوية اليمنى السفلية (زر التكبير) */
         .video-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: calc(100% - 45px); /* نترك 45 بكسل في الأسفل للأزرار */
-            z-index: 99;
-            background: transparent;
+            height: 80%; /* يغطي الفيديو ولا يصل لشريط التحكم السفلي */
+            z-index: 10;
+            background: rgba(0,0,0,0); /* شفاف تماماً */
         }
     </style>
 </head>
@@ -57,11 +57,11 @@
     <script>
         function loadVideo(element, url) {
             const videoId = url.split('/').pop().split('?')[0]; 
-            // إضافة div الذي يعمل كغطاء (Overlay)
+            // الـ Overlay هنا يغطي مساحة العرض الرئيسية فقط، مما يترك شريط التحكم في الأسفل حراً تماماً
             element.innerHTML = `
                 <div class="video-overlay"></div>
                 <iframe 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3" 
                     style="width:100%; height:100%; border:none;" 
                     allow="autoplay; encrypted-media" 
                     allowfullscreen>
@@ -69,7 +69,6 @@
             `;
         }
 
-        // باقي الكود كما هو
         const validCodes = ["12543", "83920", "47105", "92837", "10293", "56473", "28374", "91028", "37465", "82910"];
         function checkCode() {
             const input = document.getElementById("code-input").value;
