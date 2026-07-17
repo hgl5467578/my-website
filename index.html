@@ -2,106 +2,52 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الرياضيات - السادس العلمي</title>
-    
     <style>
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0b0e14; z-index: 9999;
-            display: flex; justify-content: center; align-items: center; flex-direction: column;
-            color: #d4af37;
-        }
-        .login-banner { max-width: 300px; width: 90%; margin-bottom: 25px; border-radius: 10px; border: 2px solid #d4af37; }
-        body { font-family: sans-serif; background: #0b0e14; color: #ffffff; margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: auto; }
-        h1 { text-align: center; color: #d4af37; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
-        #videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px; }
-        .card { background: #1c202d; padding: 15px; border-radius: 10px; border: 1px solid #d4af37; text-align: center; }
-        input { padding: 10px; width: 200px; margin: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1c202d; color: white; }
-        button { padding: 10px 20px; background: #d4af37; border: none; border-radius: 5px; cursor: pointer; color: black; font-weight: bold; }
-        
-        /* حاوية الفيديو التي تعمل كإطار قص */
+        /* الحاوية الأساسية للفيديو */
         .video-box {
-            position: relative; width: 100%; height: 200px; cursor: pointer;
-            margin-top: 10px; border: 2px solid #d4af37; border-radius: 10px; 
-            overflow: hidden; 
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #000;
         }
-        .cover-img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* تنسيق الفيديو داخل الإطار لقص الأطراف غير المرغوب بها */
-        .video-frame {
+        /* الطبقة التي تغطي كل شيء */
+        .video-overlay {
             position: absolute;
-            top: -35px;    /* إزاحة الفيديو للأعلى لإخفاء الشريط العلوي */
+            top: 0;
             left: 0;
             width: 100%;
-            height: 270px; /* زيادة الطول للسماح بقص الأطراف مع إبقاء زر التكبير ظاهرًا */
+            height: 100%;
+            z-index: 10;
+            /* نستخدم 'clip-path' لعمل ثقب في الغطاء عند زر التكبير فقط */
+            /* هذا الكود يغطي كل شيء ويترك مربعاً في أسفل اليسار مفتوحاً */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 85% 100%, 85% 85%, 0% 85%);
+            background: transparent;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
             border: none;
         }
     </style>
 </head>
-
 <body>
 
-    <div id="login-screen">
-        <img src="login-banner.png" class="login-banner" alt="إعلان الدورة">
-        <h1>🔐 دخول الطالب</h1>
-        <input type="text" id="code-input" placeholder="أدخل الكود">
-        <button onclick="checkCode()">دخول</button>
+    <div class="video-box">
+        <!-- هذا هو الدرع: يغطي كل الفيديو ولا يسمح بالضغط إلا في المنطقة المفتوحة أسفل يسار -->
+        <div class="video-overlay"></div>
+        
+        <iframe 
+            src="https://www.youtube.com/embed/OvsP1rkS7Yw?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen>
+        </iframe>
     </div>
 
-    <div class="container" id="main-content" style="display: none;">
-        <h1>📚 دورة الرياضيات</h1>
-        <div id="videos"></div>
-    </div>
-
-    <script>
-        function loadVideo(element, url) {
-            const videoId = url.split('/').pop().split('?')[0]; 
-            // قمنا بإزالة Overlay واستخدام تقنية القص في CSS
-            element.innerHTML = `
-                <iframe 
-                    class="video-frame"
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3" 
-                    allow="autoplay; encrypted-media" 
-                    allowfullscreen>
-                </iframe>
-            `;
-        }
-
-        const validCodes = [
-            "12543", "83920", "47105", "92837", "10293", 
-            "56473", "28374", "91028", "37465", "82910", 
-            "47362", "59281", "10394", "67482", "29384", 
-            "83746", "51627", "49382", "92019", "74653"
-        ];
-
-        function checkCode() {
-            const input = document.getElementById("code-input").value;
-            if (validCodes.includes(input)) {
-                document.getElementById("login-screen").style.display = "none";
-                document.getElementById("main-content").style.display = "block";
-            } else {
-                alert("كود خاطئ!");
-            }
-        }
-
-        const videos = [
-            { title: "الدرس الأول", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
-            { title: "الدرس الثاني", url: "https://www.youtube.com/embed/OvsP1rkS7Yw" },
-            { title: "الدرس الثالث", url: "https://www.youtube.com/embed/VP63-l44Gyg" }
-        ];
-
-        const container = document.getElementById("videos");
-        videos.forEach(video => {
-            container.innerHTML += `
-            <div class="card">
-                <h2>${video.title}</h2>
-                <div class="video-box" onclick="loadVideo(this, '${video.url}')">
-                    <img src="poster.jpg" class="cover-img">
-                </div>
-            </div>`;
-        });
-    </script>
 </body>
 </html>
