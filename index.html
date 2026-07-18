@@ -103,11 +103,35 @@ const validCodes = [
 
 function checkCode() {
     const input = document.getElementById("code-input").value;
+    
+    // 1. التحقق من أن الكود موجود في القائمة
     if (validCodes.includes(input)) {
-        localStorage.setItem("isLoggedIn", "true");
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("main-content").style.display = "block";
+        
+        // 2. التحقق من "بصمة الجهاز" المسجلة لهذا الكود
+        const savedDevice = localStorage.getItem("device_" + input);
+        const currentDevice = navigator.userAgent; // بصمة بسيطة لجهاز الطالب
+
+        if (!savedDevice) {
+            // إذا كان الكود لم يُستخدم من قبل، احفظ جهاز هذا الطالب
+            localStorage.setItem("device_" + input, currentDevice);
+            localStorage.setItem("isLoggedIn", "true");
+            alert("تم تفعيل الكود على هذا الجهاز بنجاح!");
+            // أكمل عملية الدخول...
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+        } 
+        else if (savedDevice === currentDevice) {
+            // إذا كان الكود مستخدماً ومن نفس الجهاز
+            localStorage.setItem("isLoggedIn", "true");
+            document.getElementById("login-screen").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+        } 
+        else {
+            // إذا كان الكود مستخدماً من جهاز مختلف
+            alert("عذراً، هذا الكود مفعل بالفعل على جهاز آخر ولا يمكن استخدامه هنا.");
+        }
     } else {
+        // إذا كان الكود غير موجود في القائمة
         alert("كود خاطئ!");
     }
 }
