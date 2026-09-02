@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الرياضيات - السادس العلمي</title>
-    
+
     <style>
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -13,13 +13,10 @@
             color: #d4af37;
         }
         .login-banner {
-            max-width: 300px;
-            width: 90%;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            border: 2px solid #d4af37;
+            max-width: 300px; width: 90%; margin-bottom: 25px;
+            border-radius: 10px; border: 2px solid #d4af37;
         }
-        body { 
+        body {
             font-family: sans-serif; background: #0b0e14; color: #ffffff; margin: 0; padding: 20px;
         }
         .container { max-width: 1100px; margin: auto; }
@@ -28,35 +25,20 @@
         .card { background: #1c202d; padding: 15px; border-radius: 10px; border: 1px solid #d4af37; text-align: center; }
         input { padding: 10px; width: 200px; margin: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1c202d; color: white; }
         button { padding: 10px 20px; background: #d4af37; border: none; border-radius: 5px; cursor: pointer; color: black; font-weight: bold; }
-        
+
         .video-box {
             position: relative; width: 100%; height: 200px; cursor: pointer;
             margin-top: 10px; border: 2px solid #d4af37; border-radius: 10px; overflow: hidden;
         }
         .cover-img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* تعديل الدروع الشفافة لتمتص النقرات بنسبة 100% وتمنع وصولها لليوتيوب */
         .video-shield-top {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 55px; /* يغطي اسم القناة والبحث والمشاركة */
-            background: rgba(0, 0, 0, 0); /* لون شفاف تماماً لكنه يلتقط النقرات */
-            z-index: 10;
-            cursor: default;
-            pointer-events: auto; /* إجبار المتصفح على حظر الضغط هنا */
+            position: absolute; top: 0; left: 0; width: 100%; height: 55px;
+            background: rgba(0, 0, 0, 0); z-index: 10; cursor: default; pointer-events: auto;
         }
         .video-shield-bottom-left {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 120px; /* يغطي كلمة YouTube بالكامل */
-            height: 45px;
-            background: rgba(0, 0, 0, 0); 
-            z-index: 10;
-            cursor: default;
-            pointer-events: auto; /* إجبار المتصفح على حظر الضغط هنا */
+            position: absolute; bottom: 0; left: 0; width: 120px; height: 45px;
+            background: rgba(0, 0, 0, 0); z-index: 10; cursor: default; pointer-events: auto;
         }
     </style>
 </head>
@@ -72,86 +54,114 @@
 
     <div class="container" id="main-content" style="display: none;">
         <h1>📚 دورة الرياضيات</h1>
-        <div id="videos"></div>
+        <div id="videos">جاري تحميل الفيديوهات...</div>
     </div>
 
-    <script>
-        // دالة عرض الفيديو مع تفعيل جدار الحماية sandbox والدروع الشفافة
-        function loadVideo(element, url) {
-            const videoId = url.split('/').pop().split('?')[0]; 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getFirestore, collection, getDocs, orderBy, query
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        // ============================================================
+        // عبّي نفس بيانات مشروع Firebase المستخدمة في teacher.html
+        // ============================================================
+        const firebaseConfig = {
+          apiKey: "AIzaSyAnrA51VP7E9uH2e567EDRNml4Hy_tdj2A",
+          authDomain: "math-ed7aa.firebaseapp.com",
+          projectId: "math-ed7aa",
+          storageBucket: "math-ed7aa.firebasestorage.app",
+          messagingSenderId: "104137767322",
+          appId: "1:104137767322:web:6b65acadecaf96701ce223"  
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // دالة عرض الفيديو مع الدروع الشفافة (تحمي أزرار يوتيوب/العلامة التجارية)
+        window.loadVideo = function (element, url) {
             element.innerHTML = `
                 <div class="video-shield-top"></div>
                 <div class="video-shield-bottom-left"></div>
-                <iframe 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0" 
-                    style="width:100%; height:150%; position:relative; top:-25%; border:none; z-index:1;"
-                    allow="autoplay; encrypted-media" 
-                    sandbox="allow-scripts allow-same-origin allow-presentation" 
-                    allowfullscreen>
+                <iframe
+                    src="${url}"
+                    width="100%" height="100%" frameborder="0"
+                    style="position:relative; z-index:1;"
+                    allowfullscreen="true" webkitallowfullscreen="true"
+                    mozallowfullscreen="true" playsinline="true" webkit-playsinline="true">
                 </iframe>
             `;
-        }
+        };
 
-     // قائمة الرموز المعتمدة (بقت كما هي حرفياً)
-const validCodes = [
-    "12543", "83920", "47105", "92837", "10293", 
-    "56473", "28374", "91028", "37465", "82910", 
-    "47362", "59281", "10394", "67482", "29384", 
-    "83746", "51627", "49382", "92019", "74653"
-];
+        // ===== نظام الأكواد وقفل الجهاز (كما هو) =====
+        const validCodes = [
+            "12543", "83920", "47105", "92837", "10293",
+            "56473", "28374", "91028", "37465", "82910",
+            "47362", "59281", "10394", "67482", "29384",
+            "83746", "51627", "49382", "92019", "74653"
+        ];
 
-function checkCode() {
-    const input = document.getElementById("code-input").value;
-    
-    // 1. التحقق من أن الكود موجود في القائمة
-    if (validCodes.includes(input)) {
-        
-        // 2. التحقق من "بصمة الجهاز" المسجلة لهذا الكود
-        const savedDevice = localStorage.getItem("device_" + input);
-        const currentDevice = navigator.userAgent; // بصمة بسيطة لجهاز الطالب
+        window.checkCode = function () {
+            const input = document.getElementById("code-input").value;
 
-        if (!savedDevice) {
-            // إذا كان الكود لم يُستخدم من قبل، احفظ جهاز هذا الطالب
-            localStorage.setItem("device_" + input, currentDevice);
-            localStorage.setItem("isLoggedIn", "true");
-            alert("تم تفعيل الكود على هذا الجهاز بنجاح!");
-            // أكمل عملية الدخول...
+            if (validCodes.includes(input)) {
+                const savedDevice = localStorage.getItem("device_" + input);
+                const currentDevice = navigator.userAgent;
+
+                if (!savedDevice) {
+                    localStorage.setItem("device_" + input, currentDevice);
+                    localStorage.setItem("isLoggedIn", "true");
+                    alert("تم تفعيل الكود على هذا الجهاز بنجاح!");
+                    enterSite();
+                } else if (savedDevice === currentDevice) {
+                    localStorage.setItem("isLoggedIn", "true");
+                    enterSite();
+                } else {
+                    alert("عذراً، هذا الكود مفعل بالفعل على جهاز آخر ولا يمكن استخدامه هنا.");
+                }
+            } else {
+                alert("كود خاطئ!");
+            }
+        };
+
+        function enterSite() {
             document.getElementById("login-screen").style.display = "none";
             document.getElementById("main-content").style.display = "block";
-        } 
-        else if (savedDevice === currentDevice) {
-            // إذا كان الكود مستخدماً ومن نفس الجهاز
-            localStorage.setItem("isLoggedIn", "true");
-            document.getElementById("login-screen").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-        } 
-        else {
-            // إذا كان الكود مستخدماً من جهاز مختلف
-            alert("عذراً، هذا الكود مفعل بالفعل على جهاز آخر ولا يمكن استخدامه هنا.");
+            loadVideosFromServer();
         }
-    } else {
-        // إذا كان الكود غير موجود في القائمة
-        alert("كود خاطئ!");
-    }
-}
 
-        // روابط فيديوهاتك (بقت كما هي حرفياً)
-        const videos = [
-    { title: "هوسه", url: "https://streamable.com/e/y5q1iv" },
-    { title: "الدرس الثاني", url: "https://streamable.com/e/58olww" }
-];
+        // ===== سحب قائمة الفيديوهات من Firebase (بدلاً من قائمة ثابتة) =====
+        async function loadVideosFromServer() {
+            const container = document.getElementById("videos");
+            container.innerHTML = "جاري تحميل الفيديوهات...";
 
-        const container = document.getElementById("videos");
-videos.forEach(video => {
-    container.innerHTML += `
-    <div class="card">
-        <h2>${video.title}</h2>
-        <div class="video-box" style="padding:0; overflow:hidden;">
-            <iframe src="${video.url}" width="100%" height="100%" frameborder="0" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" playsinline="true" webkit-playsinline="true"></iframe>
-        </div>
-    </div>`;
-});
+            try {
+                const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
+                const snap = await getDocs(q);
+
+                if (snap.empty) {
+                    container.innerHTML = "<p>لا يوجد فيديوهات منشورة حالياً.</p>";
+                    return;
+                }
+
+                container.innerHTML = "";
+                snap.forEach(docSnap => {
+                    const video = docSnap.data();
+                    container.innerHTML += `
+                    <div class="card">
+                        <h2>${video.title}</h2>
+                        <div class="video-box" style="padding:0; overflow:hidden;"
+                             onclick="loadVideo(this, '${video.url}')">
+                            <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#d4af37;">
+                                ▶️ اضغط للتشغيل
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            } catch (err) {
+                container.innerHTML = "<p style='color:red;'>تعذر تحميل الفيديوهات: " + err.message + "</p>";
+            }
+        }
     </script>
 </body>
 </html>
