@@ -21,8 +21,10 @@
         }
         .container { max-width: 1100px; margin: auto; }
         h1 { text-align: center; color: #d4af37; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
-        #videos { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px; }
+        h2 { color: #d4af37; margin-top: 40px; }
+        #videos, #homework { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px 0; }
         .card { background: #1c202d; padding: 15px; border-radius: 10px; border: 1px solid #d4af37; text-align: center; }
+        .card img { width: 100%; border-radius: 8px; margin-top: 10px; }
         input { padding: 10px; width: 200px; margin: 10px; border-radius: 5px; border: 1px solid #d4af37; background: #1c202d; color: white; }
         button { padding: 10px 20px; background: #d4af37; border: none; border-radius: 5px; cursor: pointer; color: black; font-weight: bold; }
 
@@ -30,8 +32,6 @@
             position: relative; width: 100%; height: 200px; cursor: pointer;
             margin-top: 10px; border: 2px solid #d4af37; border-radius: 10px; overflow: hidden;
         }
-        .cover-img { width: 100%; height: 100%; object-fit: cover; }
-
         .video-shield-top {
             position: absolute; top: 0; left: 0; width: 100%; height: 55px;
             background: rgba(0, 0, 0, 0); z-index: 10; cursor: default; pointer-events: auto;
@@ -40,6 +40,28 @@
             position: absolute; bottom: 0; left: 0; width: 120px; height: 45px;
             background: rgba(0, 0, 0, 0); z-index: 10; cursor: default; pointer-events: auto;
         }
+
+        /* زر الاستفسار العائم */
+        #inquiry-btn {
+            position: fixed; top: 15px; left: 15px; z-index: 500;
+            border-radius: 50px; padding: 10px 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        #inquiry-panel {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000; display: none;
+            justify-content: center; align-items: center;
+        }
+        #inquiry-box {
+            background: #1c202d; border: 2px solid #d4af37; border-radius: 12px;
+            padding: 20px; max-width: 400px; width: 90%; text-align: center;
+        }
+        #inquiry-box textarea {
+            width: 100%; box-sizing: border-box; min-height: 100px; padding: 10px;
+            border-radius: 5px; border: 1px solid #d4af37; background: #0b0e14; color: white;
+            font-family: inherit; margin: 12px 0; resize: vertical;
+        }
+        #inquiry-close { background: transparent; color: #d4af37; border: 1px solid #d4af37; margin-right: 8px; }
+        #inquiry-status { margin-top: 10px; color: #d4af37; min-height: 18px; }
     </style>
 </head>
 
@@ -52,33 +74,56 @@
         <button onclick="checkCode()">دخول</button>
     </div>
 
+    <!-- زر الاستفسار العائم -->
+    <button id="inquiry-btn" onclick="openInquiry()" style="display:none;">❓ استفسار</button>
+
+    <!-- نافذة الاستفسار -->
+    <div id="inquiry-panel">
+        <div id="inquiry-box">
+            <h2 style="margin-top:0;">✉️ أرسل استفسارك للأستاذ</h2>
+            <textarea id="inquiry-text" placeholder="اكتب سؤالك هنا..."></textarea>
+            <div>
+                <button onclick="sendInquiry()">📤 إرسال</button>
+                <button id="inquiry-close" onclick="closeInquiry()">إغلاق</button>
+            </div>
+            <div id="inquiry-status"></div>
+        </div>
+    </div>
+
     <div class="container" id="main-content" style="display: none;">
         <h1>📚 دورة الرياضيات</h1>
+
+        <h2>🎬 الفيديوهات</h2>
         <div id="videos">جاري تحميل الفيديوهات...</div>
+
+        <h2>📚 واجباتي</h2>
+        <div id="homework">جاري تحميل الواجبات...</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import {
-            getFirestore, collection, getDocs, orderBy, query
+            getFirestore, collection, getDocs, addDoc, orderBy, query, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // ============================================================
-        // عبّي نفس بيانات مشروع Firebase المستخدمة في teacher.html
+        // نفس بيانات Firebase المستخدمة في teacher.html
         // ============================================================
         const firebaseConfig = {
-          apiKey: "AIzaSyAnrA51VP7E9uH2e567EDRNml4Hy_tdj2A",
-          authDomain: "math-ed7aa.firebaseapp.com",
-          projectId: "math-ed7aa",
-          storageBucket: "math-ed7aa.firebasestorage.app",
-          messagingSenderId: "104137767322",
-          appId: "1:104137767322:web:6b65acadecaf96701ce223"  
+            apiKey: "AIzaSyAnrA51VP7E9uH2e567EDRNml4Hy_tdj2A",
+            authDomain: "math-ed7aa.firebaseapp.com",
+            projectId: "math-ed7aa",
+            storageBucket: "math-ed7aa.firebasestorage.app",
+            messagingSenderId: "104137767322",
+            appId: "1:104137767322:web:6b65acadecaf96701ce223"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // دالة عرض الفيديو مع الدروع الشفافة (تحمي أزرار يوتيوب/العلامة التجارية)
+        let currentStudentCode = null;
+
+        // دالة عرض الفيديو مع الدروع الشفافة
         window.loadVideo = function (element, url) {
             element.innerHTML = `
                 <div class="video-shield-top"></div>
@@ -93,7 +138,7 @@
             `;
         };
 
-        // ===== نظام الأكواد وقفل الجهاز (كما هو) =====
+        // ===== نظام الأكواد وقفل الجهاز =====
         const validCodes = [
             "12543", "83920", "47105", "92837", "10293",
             "56473", "28374", "91028", "37465", "82910",
@@ -112,10 +157,10 @@
                     localStorage.setItem("device_" + input, currentDevice);
                     localStorage.setItem("isLoggedIn", "true");
                     alert("تم تفعيل الكود على هذا الجهاز بنجاح!");
-                    enterSite();
+                    enterSite(input);
                 } else if (savedDevice === currentDevice) {
                     localStorage.setItem("isLoggedIn", "true");
-                    enterSite();
+                    enterSite(input);
                 } else {
                     alert("عذراً، هذا الكود مفعل بالفعل على جهاز آخر ولا يمكن استخدامه هنا.");
                 }
@@ -124,32 +169,29 @@
             }
         };
 
-        function enterSite() {
+        function enterSite(code) {
+            currentStudentCode = code;
             document.getElementById("login-screen").style.display = "none";
             document.getElementById("main-content").style.display = "block";
+            document.getElementById("inquiry-btn").style.display = "block";
             loadVideosFromServer();
+            loadHomeworkFromServer();
         }
 
-        // ===== سحب قائمة الفيديوهات من Firebase (بدلاً من قائمة ثابتة) =====
+        // ===== الفيديوهات =====
         async function loadVideosFromServer() {
             const container = document.getElementById("videos");
             container.innerHTML = "جاري تحميل الفيديوهات...";
-
             try {
                 const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
                 const snap = await getDocs(q);
-
-                if (snap.empty) {
-                    container.innerHTML = "<p>لا يوجد فيديوهات منشورة حالياً.</p>";
-                    return;
-                }
-
+                if (snap.empty) { container.innerHTML = "<p>لا يوجد فيديوهات منشورة حالياً.</p>"; return; }
                 container.innerHTML = "";
                 snap.forEach(docSnap => {
                     const video = docSnap.data();
                     container.innerHTML += `
                     <div class="card">
-                        <h2>${video.title}</h2>
+                        <h3>${video.title}</h3>
                         <div class="video-box" style="padding:0; overflow:hidden;"
                              onclick="loadVideo(this, '${video.url}')">
                             <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#d4af37;">
@@ -162,6 +204,57 @@
                 container.innerHTML = "<p style='color:red;'>تعذر تحميل الفيديوهات: " + err.message + "</p>";
             }
         }
+
+        // ===== الواجبات =====
+        async function loadHomeworkFromServer() {
+            const container = document.getElementById("homework");
+            container.innerHTML = "جاري تحميل الواجبات...";
+            try {
+                const q = query(collection(db, "homework"), orderBy("createdAt", "desc"));
+                const snap = await getDocs(q);
+                if (snap.empty) { container.innerHTML = "<p>لا يوجد واجبات حالياً.</p>"; return; }
+                container.innerHTML = "";
+                snap.forEach(docSnap => {
+                    const hw = docSnap.data();
+                    container.innerHTML += `
+                    <div class="card">
+                        <h3>${hw.title}</h3>
+                        <img src="${hw.image}" alt="">
+                    </div>`;
+                });
+            } catch (err) {
+                container.innerHTML = "<p style='color:red;'>تعذر تحميل الواجبات: " + err.message + "</p>";
+            }
+        }
+
+        // ===== الاستفسار =====
+        window.openInquiry = function () {
+            document.getElementById("inquiry-panel").style.display = "flex";
+        };
+        window.closeInquiry = function () {
+            document.getElementById("inquiry-panel").style.display = "none";
+            document.getElementById("inquiry-status").textContent = "";
+        };
+        window.sendInquiry = async function () {
+            const text = document.getElementById("inquiry-text").value.trim();
+            const statusEl = document.getElementById("inquiry-status");
+            if (!text) { alert("الرجاء كتابة استفسارك أولاً"); return; }
+
+            statusEl.textContent = "⏳ جاري الإرسال...";
+            try {
+                await addDoc(collection(db, "inquiries"), {
+                    studentCode: currentStudentCode,
+                    message: text,
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
+                statusEl.textContent = "✅ تم إرسال استفسارك للأستاذ بنجاح!";
+                document.getElementById("inquiry-text").value = "";
+                setTimeout(closeInquiry, 1500);
+            } catch (err) {
+                statusEl.textContent = "❌ خطأ: " + err.message;
+            }
+        };
     </script>
 </body>
 </html>
