@@ -2,8 +2,8 @@ const CACHE_NAME = "math-platform-v1";
 const APP_SHELL = [
   "./student.html",
   "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 // عند التثبيت: خزّن هيكل التطبيق الأساسي محلياً
